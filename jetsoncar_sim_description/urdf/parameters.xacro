@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<robot name="jetsoncar" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+	<!-- X axis direction is forward, Y axis direction is left -->
+
+	<!-- Sensors related properties -->
+	<xacro:property name="enable_lidar" value="true" />
+	<xacro:property name="enable_realsense" value="false" />
+	<xacro:property name="enable_range_sensors" value="false" />
+	<xacro:property name="enable_dual_camera" value="false" />
+	<xacro:property name="enable_front_camera" value="false" />
+	<xacro:property name="enable_imu" value="true" />
+
+	<!-- IMU related properties -->
+	<xacro:property name="imu_width" value="0.05" />
+	<xacro:property name="imu_length" value="0.05" />
+	<xacro:property name="imu_height" value="0.03" />
+
+	<!-- Wheel related properties -->
+	<xacro:property name="wheel_diameter" value="0.155" />
+	<xacro:property name="wheel_thickness" value="0.064" />
+	<xacro:property name="wheel_weight" value="0.500" />
+
+	<!-- suspension stiffness, damping, and limits -->
+	<xacro:property name="susp_travel" value="${wheel_diameter/2}"/>
+	<xacro:property name="susp_lower" value="${-susp_travel/2}"/>
+	<xacro:property name="susp_upper" value="${susp_travel/2}"/>
+	<xacro:property name="susp_damping" value="70"/>
+	<xacro:property name="susp_stiffness" value="5"/>
+	<xacro:property name="susp_spring_center" value="0.05"/>
+
+	<!-- RC car physical layout -->
+	<xacro:property name="front_to_rear_wheel_center" value="0.42" />
+	<xacro:property name="left_to_right_wheel_center" value="0.285" />
+	<xacro:property name="baseplate_to_wheel_center" value="0.118" />
+	<xacro:property name="front_to_rear_wheel_center" value="0.42" />
+	<xacro:property name="front_to_rear_wheel_center" value="0.42" />
+
+	<!-- Baseplate related properties -->
+	<xacro:property name="baseplate_width" value="0.20" />	
+	<xacro:property name="baseplate_length" value="0.50" />	
+	<xacro:property name="baseplate_thickness" value="0.0675" />	
+	<xacro:property name="baseplate_weight" value="2.000" />	
+
+	<!-- Shaft and mount related properties -->
+	<xacro:property name="mount_weight" value="0.500" />	
+	<xacro:property name="shaft_weight" value="0.100" />	
+
+	<!-- Camera related properties -->
+	<xacro:property name="camera_width" value="0.094" />
+	<xacro:property name="camera_height" value="0.029" />
+	<xacro:property name="camera_depth" value="0.024" />
+	<xacro:property name="camera_weight" value="0.162" />
+	<xacro:property name="baseplate_frontedge_to_camera" value="0.02" />
+	<xacro:property name="camera_mount_height" value="0.05" />
+	<xacro:property name="camera_mount_diameter" value="0.01" />
+	<xacro:property name="camera_disparity" value="0.14" />
+
+	<!-- LiDAR related properties -->
+	<xacro:property name="lidar_width" value="0.05" />
+	<xacro:property name="lidar_length" value="0.05" />
+	<xacro:property name="lidar_height" value="0.05" />
+	<xacro:property name="lidar_weight" value="0.200" />
+	<xacro:property name="lidar_mount_diameter" value="0.08" />
+	<xacro:property name="lidar_mount_height" value="0.13" />
+
+	<!-- Range sensor related properties -->
+	<xacro:property name="ranger_width" value="0.03" />
+	<xacro:property name="ranger_length" value="0.01" />
+	<xacro:property name="ranger_height" value="0.02" />
+	<xacro:property name="ranger_weight" value="0.050" />
+
+	<!-- Steering related properties -->
+	<xacro:property name="steering_wheel_angle_limit" value="${40/180*pi}" />
+
+</robot>

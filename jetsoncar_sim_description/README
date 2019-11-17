@@ -1,0 +1,2 @@
+# Simulation model description
+URDF models for Gazebo of the JetsonCar robot describing the car model, joints/TF (transforms) and the sensors to use/simulate in Gazebo

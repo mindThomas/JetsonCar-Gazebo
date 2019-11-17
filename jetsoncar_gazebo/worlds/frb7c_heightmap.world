@@ -1,0 +1,85 @@
+<?xml version="1.0" ?>
+<sdf version="1.5">
+  <world name="default">
+
+    <light name='sun' type='directional'>
+      <cast_shadows>1</cast_shadows>
+      <pose frame=''>0 0 10 0 -0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.1 0.1 0.1 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.5 -1</direction>
+    </light>
+
+    <!-- Increase 'max_step_size' if the simulation runs too slow -->
+    <!-- OBS! 'real_time_update_rate' has to be 1/max_step_size -->
+    <!--<gravity>0 0 -9.82</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <atmosphere type='adiabatic'/>
+    <physics name='default_physics' default='0' type='ode'>
+      <max_step_size>0.005</max_step_size>
+      <real_time_update_rate>200</real_time_update_rate>
+      <real_time_factor>1</real_time_factor>
+    </physics>-->
+
+    <scene>
+      <ambient>0.4 0.4 0.4 1</ambient>
+      <background>0.7 0.7 0.7 1</background>
+      <shadows>1</shadows>
+    </scene>
+
+    <!-- A ground plane -->
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+
+    <!-- A heightmap-based structure -->
+    <!-- See https://github.com/AS4SR/general_info/wiki/Creating-Heightmaps-for-Gazebo -->
+    <model name="mapped_environment">
+      <static>true</static>
+      <link name="link">
+        <collision name="mapped_environment_collision">
+          <geometry>
+            <heightmap>
+              <uri>model://maps/frb7c.png</uri>
+              <size>61.25955 61.25955 2</size>
+              <pos>0 0 -0.1</pos>
+            </heightmap>
+            <!--    <box>
+                  <size>0.1 0.1 0.1</size>
+                </box>-->
+          </geometry>
+        </collision>
+        <visual name="mapped_environment_visual">
+          <geometry>
+            <heightmap>
+              <use_terrain_paging>false</use_terrain_paging>
+              <texture>
+                <diffuse>model://maps/wall.jpg</diffuse> <!-- file://media/materials/textures/dirt_diffusespecular.png -->
+                <normal>file://media/materials/textures/flat_normal.png</normal>
+                <size>1</size>
+              </texture>
+              <blend>
+                <min_height>4</min_height>
+                <fade_dist>5</fade_dist>
+              </blend>
+              <uri>model://maps/frb7c.png</uri> <!-- The heightmap needs to be in grayscale of a certain resolution (2^n+1) eg. 129 x 129, 257 x 257, 513 x 513  -->
+		<!-- Original image size: 1507x1507
+                   Original resolution: 0.04065 m/pixel
+                   Physical size: 61.25955 x 61.25955
+                   Change image size: 1025x1025
+	        -->
+              <size>61.25955 61.25955 2</size>
+              <pos>0 0 -0.1</pos> <!-- OBS. The heightmap has to be in (x,y)=(0,0) to work properly! -->
+            </heightmap>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+  </world>
+</sdf>

@@ -1,0 +1,157 @@
+<?xml version="1.0"?>
+<robot name="jetsoncar" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+	<!-- X axis direction is forward, Y axis direction is left -->
+	<xacro:include filename="$(find jetsoncar_sim_description)/urdf/parameters.xacro" />
+
+	<!-- IMU -->
+	<xacro:macro name="imu_geometry">
+		<origin xyz="0 0 0" rpy="0 0 0" /> <!-- origin (0,0,0) is in the center of the box -->
+		<geometry>
+			<box size="${imu_length} ${imu_width} ${imu_height}"/> <!-- 50x50x30 mm, Please confirm against 3D drawings -->
+		</geometry>
+	</xacro:macro>
+	<xacro:macro name="imu_inertial">
+		<origin xyz="0 0 0" rpy="0 0 0" /> <!-- origin (0,0,0) is in the center of the box -->
+		<xacro:box_inertial mass="0.010" length="${imu_length}" width="${imu_width}" height="${imu_height}" /> <!-- 10 grams -->
+	</xacro:macro>
+
+
+	<!-- Baseplate -->
+	<xacro:macro name="baseplate_geometry">
+		<origin xyz="0 0 ${baseplate_thickness/2}" rpy="0 0 0" /> <!-- origin (0,0,0) is in the center of the box, so place the origin of this in the bottom of baseplate -->
+		<geometry>
+			<box size="${baseplate_length} ${baseplate_width} ${baseplate_thickness}"/> <!-- 50x20x6.75 cm, X-axis is front of vehicle -->
+		</geometry>
+	</xacro:macro>
+	<xacro:macro name="baseplate_inertial">
+		<origin xyz="0 0 ${baseplate_thickness/2}" rpy="0 0 0" /> <!-- origin (0,0,0) is in the center of the box, so place the origin of this in the bottom of baseplate -->
+		<xacro:box_inertial mass="${baseplate_weight}" length="${baseplate_length}" width="${baseplate_width}" height="${baseplate_thickness}" />
+	</xacro:macro>
+
+
+	<!-- Mount -->
+	<xacro:macro name="front_mount_geometry">
+		<origin xyz="0 0 0" rpy="0 0.5 0" /> <!-- origin (0,0,0) is in the center of the box -->
+		<geometry>
+			<box size="0.24 0.12 0.01"/>
+		</geometry>
+	</xacro:macro>
+	<xacro:macro name="rear_mount_geometry">
+		<origin xyz="0 0 0" rpy="0 -0.5 0" /> <!-- origin (0,0,0) is in the center of the box -->
+		<geometry>
+			<box size="0.24 0.12 0.01"/>
+		</geometry>
+	</xacro:macro>
+	<xacro:macro name="front_mount_inertial">
+		<origin xyz="0 0 0" rpy="0 0.5 0" /> <!-- origin (0,0,0) is in the center of the box -->
+		<xacro:box_inertial mass="${mount_weight}" length="0.24" width="0.12" height="0.01" />
+	</xacro:macro>
+	<xacro:macro name="rear_mount_inertial">
+		<origin xyz="0 0 0" rpy="0 -0.5 0" /> <!-- origin (0,0,0) is in the center of the box -->
+		<xacro:box_inertial mass="${mount_weight}" length="0.24" width="0.12" height="0.01" />
+	</xacro:macro>
+
+
+	<!-- Shaft -->
+	<xacro:macro name="shaft_geometry">
+		<origin xyz="0 0 0" rpy="1.570796327 0 0" /> <!-- origin (0,0,0) is in the center of the cylinder -->
+		<geometry>
+			<cylinder length="${left_to_right_wheel_center}" radius="0.018"/> <!-- confirm length between wheels -->
+		</geometry>
+	</xacro:macro>
+	<xacro:macro name="shaft_inertial">
+		<origin xyz="0 0 0" rpy="1.570796327 0 0" /> <!-- origin (0,0,0) is in the center of the cylinder -->
+		<xacro:cylinder_inertial mass="${shaft_weight}" radius="0.018" length="${left_to_right_wheel_center}" />
+	</xacro:macro>
+
+
+	<!-- Hinge -->
+	<xacro:macro name="hinge_geometry">
+		<origin xyz="0 0 0" rpy="0 0 0" />
+		<geometry>
+			<sphere radius="0.015"/>
+		</geometry>
+	</xacro:macro>
+	<xacro:macro name="hinge_inertial">
+		<origin xyz="0 0 0" rpy="0 0 0" />
+		<mass value="0.05" />
+		<inertia ixx="1e-5" ixy="0" ixz="0" iyy="1e-5" iyz="0" izz="1e-5" /> <!-- small inertia -->
+	</xacro:macro>
+
+
+	<!-- Wheel -->
+	<xacro:macro name="wheel_geometry">
+		<origin xyz="0 0 0" rpy="1.570796327 0 0" /> <!-- origin (0,0,0) is in the center of the cylinder -->
+		<geometry>
+			<cylinder length="${wheel_thickness}" radius="${wheel_diameter/2}"/>
+		</geometry>
+	</xacro:macro>
+	<xacro:macro name="wheel_inertial">
+		<origin xyz="0 0 0" rpy="1.570796327 0 0" /> <!-- origin (0,0,0) is in the center of the cylinder -->
+		<xacro:cylinder_inertial mass="${wheel_weight}" radius="${wheel_diameter/2}" length="${wheel_thickness}" />
+	</xacro:macro>
+
+
+	<!-- Camera -->
+	<xacro:macro name="camera_mount_geometry">
+		<origin xyz="0 0 ${camera_mount_height/2}" rpy="0 0 0" /> <!-- origin (0,0,0) is in the center of the box -->
+		<geometry>
+			<cylinder length="${camera_mount_height}" radius="${camera_mount_diameter/2}"/> <!-- confirm length between wheels -->
+		</geometry>
+	</xacro:macro>
+	<xacro:macro name="camera_mount_inertial">
+		<origin xyz="0 0 0" rpy="0 0 0" /> <!-- origin (0,0,0) is in the center of the box -->
+		<mass value="0.005" /> <!-- 5 grams -->
+		<inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" /> <!-- small inertia -->
+	</xacro:macro>
+
+	<xacro:macro name="camera_geometry">
+		<origin xyz="0 0 0" rpy="0 0 0" /> <!-- origin (0,0,0) is in the center of the box -->
+		<geometry>
+			<box size="${camera_depth} ${camera_width} ${camera_height}"/>
+		</geometry>
+	</xacro:macro>
+	<xacro:macro name="camera_inertial">
+		<origin xyz="0 0 0" rpy="0 0 0" /> <!-- origin (0,0,0) is in the center of the box -->
+		<xacro:box_inertial mass="${camera_weight}" length="${camera_depth}" width="${camera_width}" height="${camera_height}" />
+	</xacro:macro>
+
+
+	<!-- LiDAR -->
+	<xacro:macro name="lidar_mount_geometry">
+		<origin xyz="0 0 ${lidar_mount_height/2}" rpy="0 0 0" /> <!-- origin (0,0,0) is in the center of the box -->
+		<geometry>
+			<cylinder length="${lidar_mount_height}" radius="${lidar_mount_diameter/2}"/>
+		</geometry>
+	</xacro:macro>
+	<xacro:macro name="lidar_mount_inertial">
+		<origin xyz="0 0 0" rpy="0 0 0" /> <!-- origin (0,0,0) is in the center of the box -->
+		<mass value="0.020" />
+		<inertia ixx="1e-7" ixy="0" ixz="0" iyy="1e-7" iyz="0" izz="1e-7" />
+	</xacro:macro>
+
+	<xacro:macro name="lidar_geometry">
+		<origin xyz="0 0 0" rpy="0 0 0" /> <!-- origin (0,0,0) is in the center of the box -->
+		<geometry>
+			<box size="${lidar_length} ${lidar_width} ${lidar_height}"/>
+		</geometry>
+	</xacro:macro>
+	<xacro:macro name="lidar_inertial">
+		<origin xyz="0 0 0" rpy="0 0 0" /> <!-- origin (0,0,0) is in the center of the box -->
+		<xacro:box_inertial mass="${lidar_weight}" length="${lidar_length}" width="${lidar_width}" height="${lidar_height}" />
+	</xacro:macro>
+
+	<!-- Range sensor -->
+	<xacro:macro name="ranger_geometry">
+		<origin xyz="0 0 0" rpy="0 0 0" /> <!-- origin (0,0,0) is in the center of the box -->
+		<geometry>
+			<box size="${ranger_length} ${ranger_width} ${ranger_height}"/>
+		</geometry>
+	</xacro:macro>
+	<xacro:macro name="ranger_inertial">
+		<origin xyz="0 0 0" rpy="0 0 0" /> <!-- origin (0,0,0) is in the center of the box -->
+		<xacro:box_inertial mass="${ranger_weight}" length="${ranger_length}" width="${ranger_width}" height="${ranger_height}" />
+	</xacro:macro>
+
+</robot>

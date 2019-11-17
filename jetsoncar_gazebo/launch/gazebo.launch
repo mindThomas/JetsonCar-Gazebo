@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<launch>
+  	<env name="ROSCONSOLE_CONFIG_FILE" value="$(find jetsoncar_gazebo)/config/rosconsole.conf"/>
+	<param name="/use_sim_time" value="true"/>
+
+	<!-- Based on https://github.com/ros/urdf_sim_tutorial/blob/master/launch/gazebo.launch from the guide http://wiki.ros.org/urdf/Tutorials/Using%20a%20URDF%20in%20Gazebo -->
+
+	<arg name="world_name" default="control_lab" />
+	<arg name="gui" default="true" /> <!-- whether to display Gazebo GUI (rendering) or not (run headless) -->
+
+	<!-- Default starting position of robot -->
+	<arg name="x" default="0" />
+	<arg name="y" default="0" />
+
+	<!-- Open Gazebo with specified World model -->
+	<include file="$(find gazebo_ros)/launch/empty_world.launch">
+		<arg name="world_name" value="$(find jetsoncar_gazebo)/worlds/$(arg world_name).world"/>
+		<arg name="gui" value="$(arg gui)"/>
+		<arg name="debug" value="false" />
+		<arg name="paused" value="false"/>
+		<arg name="use_sim_time" value="true"/>
+		<arg name="headless" value="$(eval not arg('gui'))"/>
+	</include>	
+
+	<!-- urdf xml robot description loaded on the Parameter Server (for use in RViz) - this also converts the xacro into a proper urdf file -->
+	<param name="robot_description" command="$(find xacro)/xacro '$(find jetsoncar_sim_description)/urdf/jetsoncar.xacro'" />
+	<param name="use_gui" value="$(arg gui)"/>
+
+	<!-- Spawn JetsonCar robot in Gazebo -->
+	<node name="jetsoncar_spawn" pkg="gazebo_ros" type="spawn_model" args="-urdf -param robot_description -model jetsoncar -x $(arg x) -y $(arg y) -z 0.2" respawn="false" output="screen" /> <!-- make sure model name matches the robot name in the xacro file -->	
+
+	<!-- We can either develop our own controllers for the actuators or use the built in types as below -->
+	<!-- See especially: http://gazebosim.org/tutorials/?tut=ros_control -->
+	<!-- If we want to develop our own controllers, take a look at Chapter 6 in Mastering ROS for Robotics Programming: https://www.packtpub.com/mapt/book/hardware_and_creative/9781783551798/6/ch06lvl1sec47/writing-a-basic-real-time-joint-controller-in-ros -->
+        <rosparam file="$(find jetsoncar_gazebo)/config/controllers.yaml" command="load"/> <!-- Load joint controller configurations from YAML file to parameter server -->
+        <!-- Remember to install: "sudo apt-get install ros-kinetic-gazebo-ros-control ros-kinetic-joint-state-controller ros-kinetic-effort-controllers ros-kinetic-position-controllers" -->
+        <node name="controller_manager" pkg="controller_manager" type="spawner" respawn="false"
+              output="screen" ns="/jetsoncar" args="front_right_wheel_velocity_controller front_left_wheel_velocity_controller
+						    rear_right_wheel_velocity_controller rear_left_wheel_velocity_controller
+						    front_right_hinge_position_controller front_left_hinge_position_controller
+                                                    joint_state_controller"/>
+
+	<!-- calculate and publish the tf's for each joint based on the urdf file within robot_description -->
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true" output="screen">
+		<param name="publish_frequency" type="double" value="1000" />
+		<remap from="/joint_states" to="/jetsoncar/joint_states" /> <!-- if the namespace is set/changed in gazebo.xacro then it is important to change this line such that the namespaces /joint_states is remapped to /ns/joint_states -->
+	</node>
+
+	<!-- rviz display -->
+	<node name="rviz_visualizer" pkg="rviz" type="rviz" required="false" args="-d $(find jetsoncar_sim_description)/rviz/tf_display.rviz"/> <!-- tf_display -->
+
+	<!-- Simulation nodes to publish same messages as from hardware -->
+        <!-- Encoder message publisher - front + rear wheel encoders + steering angle -->
+	<!--<node pkg="jetsoncar_gazebo" name="jetsoncar_encoders_node" type="encoders_simulator.py">
+		<param name="publish_frequency" type="double" value="100" />
+        </node>
+        -->
+	<!--<node pkg="jetsoncar_gazebo" name="gazebo_odometry_node" type="gazebo_odometry.py"/>-->
+	<!--<node pkg="jetsoncar_gazebo" name="gazebo_test_commands" type="test_commands.py"/>-->
+
+</launch>

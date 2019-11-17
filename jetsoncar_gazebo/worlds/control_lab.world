@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<sdf version="1.4">
+  <world name="default">
+
+<!--
+    <light name='sun' type='directional'>
+      <cast_shadows>1</cast_shadows>
+      <pose frame=''>0 0 10 0 -0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.1 0.1 0.1 1</specular>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+      <direction>-0.5 0.5 -1</direction>
+    </light>
+-->
+
+
+  <include>
+    <uri>model://sun</uri>
+  </include>
+
+
+  <model name="ground_plane">
+    <static>true</static>
+    <link name="link">
+      <collision name="collision">
+        <geometry>
+          <plane>
+            <normal>0 0 1</normal>
+            <size>150 150</size>
+          </plane>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>100</mu>
+              <mu2>50</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+      <visual name="visual">
+        <cast_shadows>false</cast_shadows>
+        <geometry>
+          <plane>
+            <normal>0 0 1</normal>
+            <size>150 150</size>
+          </plane>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Grey</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+    <!-- Heightmap converted into DAE file -->
+    <!-- See https://www.instructables.com/id/Converting-Map-Height-Data-Into-3D-Tiles/ -->
+    <!-- The heightmap should be square -->
+    <!-- With the converter the output width will always be based on the input image pixels (width). Hence if an image of size 500x500 is used, the output will also be an STL file with units 500x500 -->
+    <!-- To control the height (make the height a desired dimension) you use the resolution of the heightmap defined in meter/pixel -->
+    <!-- Unit height [pixels] = Desired height [m] / Resolution [m/pixels] -->
+    <!-- "java -jar heightmap2stl.jar 'heightmap.png' '<unit height>' '1'" will export the model with 4 units height and number of image pixels units width -->
+    <!-- A desired height of approximately 3 m for indoor maps is reasonable -->
+    <!-- This will export an STL file. Now you can use eg. Meshlab to convert this to a DAE file for use in Gazebo -->
+    <!-- In Meshlab I suggest you scale the model to 1/10th of the metric scale, hence scaling by "10*<resolution>" where Resolution is in [meter pr. pixels] -->
+    <!-- In Meshlab you scale by going to Filters -> Normals, Curvatures and Orientation -> Transform: Scale -->
+    <!-- To simplify the model select "Quadratic Edge Collapse Decimation" and check "Preserve Boundary", "Preserve Normal", "Optimal position..." and "Post-simplification..." - and se"Target Number of faces" to around 100.000, "Pecentage Reduction" to 0 and "Quality Threshold" to 1 -->
+    <model name="mapped_environment">
+      <static>true</static>
+      <link name="link">
+        <collision name="mapped_environment_collision">
+          <pose>10 10 -0.1 0 0 0</pose> 
+          <geometry>
+         	<mesh>
+	        	<uri>model://maps/control_lab.dae</uri>
+	        	<scale>0.1 0.1 0.1</scale>
+          	</mesh>
+          </geometry>
+        </collision>
+        <visual name="mapped_environment_visual">
+          <pose>10 10 -0.1 0 0 0</pose> 
+          <geometry>
+          	<mesh>
+	        	<uri>model://maps/control_lab.dae</uri>
+	        	<scale>0.1 0.1 0.1</scale>
+          	</mesh>
+          </geometry>
+	  <!--<material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Black</name>
+            </script>
+	  </material>-->
+	  <material>
+		<ambient>0.4 0.4 0.4 1</ambient> <!-- RGB = (0.4, 0.4, 0.4) -->
+		<diffuse>0.4 0.4 0.4 1</diffuse>
+		<specular>0.1 0.1 0.1 1</specular>
+		<emissive>0 0 0 0</emissive>
+	  </material>
+        </visual>
+      </link>
+    </model>
+
+
+    <!-- Increase 'max_step_size' if the simulation runs too slow -->
+    <!-- OBS! 'real_time_update_rate' has to be 1/max_step_size to achieve real-time execution -->
+    <!-- Since the realtime factor is defined as: real_time_factor = max_step_size * real_time_update_rate -->
+    <gravity>0 0 -9.82</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <atmosphere type='adiabatic'/>
+    <physics name='default_physics' default='0' type='ode'>
+      <max_step_size>0.002</max_step_size>
+      <real_time_update_rate>500</real_time_update_rate>
+      <real_time_factor>1</real_time_factor>
+            <ode>
+    <solver>
+      <iters>10</iters>
+    </solver>
+            </ode>
+    </physics>
+
+</world>
+</sdf>

@@ -1,0 +1,375 @@
+<?xml version="1.0"?>
+<robot name="jetsoncar" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<!--
+ 1. Create model with URDF: http://wiki.ros.org/urdf/Tutorials/Create%20your%20own%20urdf%20file
+ 2. Add controllable joints: http://wiki.ros.org/urdf/Tutorials/Building%20a%20Movable%20Robot%20Model%20with%20URDF
+ 3. Physical properties: http://wiki.ros.org/urdf/Tutorials/Adding%20Physical%20and%20Collision%20Properties%20to%20a%20URDF%20Model or http://gazebosim.org/tutorials/?tut=ros_urdf
+ 4. Use Macros: http://wiki.ros.org/urdf/Tutorials/Using%20Xacro%20to%20Clean%20Up%20a%20URDF%20File
+ 5. Link to Gazebo: http://wiki.ros.org/urdf/Tutorials/Using%20a%20URDF%20in%20Gazebo
+-->
+
+<!-- Inspired from https://github.com/DJTobias/Cherry-Autonomous-Racecar/blob/master/urdf/car.urdf
+     and https://github.com/mit-racecar/racecar-simulator/blob/master/racecar_description/urdf/racecar.xacro
+-->
+
+	<xacro:include filename="$(find jetsoncar_sim_description)/urdf/parameters.xacro" />
+	<xacro:include filename="$(find jetsoncar_sim_description)/urdf/functions.xacro" />
+	<xacro:include filename="$(find jetsoncar_sim_description)/urdf/physical.xacro" />
+	<xacro:include filename="$(find jetsoncar_sim_description)/urdf/joints.xacro" />
+	<xacro:include filename="$(find jetsoncar_sim_description)/urdf/transmissions.xacro" />
+	<xacro:include filename="$(find jetsoncar_sim_description)/urdf/materials.xacro" />
+	
+	<link name="footprint"/>
+
+	<link name="base_link">
+		<visual>
+			<material name="acrylic"/>
+			<xacro:baseplate_geometry/>
+		</visual>
+		<collision>
+			<xacro:baseplate_geometry/>
+		</collision>
+		<inertial>
+			<xacro:baseplate_inertial/>
+		</inertial>
+	</link>
+	<xacro:fixed_offset_joint parent="footprint" child="base_link" offset="0 0 ${baseplate_to_wheel_center+wheel_diameter/2}"/>
+
+	<xacro:if value="${enable_imu}">
+		<link name="imu">
+			<visual>		
+				<material name="grey"/>				
+				<xacro:imu_geometry/>			
+			</visual>
+			<collision>
+				<xacro:imu_geometry/>			
+			</collision>
+			<inertial>
+				<xacro:imu_inertial/>
+			</inertial>
+		</link>
+		<xacro:fixed_offset_joint parent="base_link" child="imu" offset="0 0 ${imu_height/2}"/> <!-- because origin is in the center, we want the IMU to stand on the baseplate -->
+		<gazebo reference="imu">
+		</gazebo>
+	</xacro:if>
+
+	<link name="front_mount">
+		<visual>
+			<material name="grey"/>
+			<xacro:front_mount_geometry/>
+		</visual>
+		<collision>
+			<xacro:front_mount_geometry/>
+		</collision>
+		<inertial>
+			<xacro:front_mount_inertial/>
+		</inertial>
+	</link>
+	<xacro:fixed_offset_joint parent="base_link" child="front_mount" offset="${front_to_rear_wheel_center/4} 0 -${baseplate_to_wheel_center/2}"/>
+
+	<link name="rear_mount">
+		<visual>
+			<material name="grey"/>
+			<xacro:rear_mount_geometry/>
+		</visual>
+		<collision>
+			<xacro:rear_mount_geometry/>
+		</collision>
+		<inertial>
+			<xacro:rear_mount_inertial/>
+		</inertial>
+	</link>
+	<xacro:fixed_offset_joint parent="base_link" child="rear_mount" offset="-${front_to_rear_wheel_center/4} 0 -${baseplate_to_wheel_center/2}"/>
+
+	<link name="front_shaft">
+		<visual>
+			<material name="black"/>
+			<xacro:shaft_geometry/>
+		</visual>
+		<!--<collision>
+			<xacro:shaft_geometry/>
+		</collision>-->
+		<inertial>
+			<xacro:shaft_inertial/>
+		</inertial>
+	</link>
+	<xacro:fixed_offset_joint parent="front_mount" child="front_shaft" offset="${front_to_rear_wheel_center/4} 0 -${baseplate_to_wheel_center/2}"/>
+	<!--<xacro:dampener_joint parent="front_mount" child="front_shaft" offset="${front_to_rear_wheel_center/4} 0 -${baseplate_to_wheel_center/2}"/> I can not get the dampener joint to work properly. The car seems to be bouncing around, like the spring is too hard and dampening is too little. I already tried adjusting several parameters. -->
+
+	<link name="rear_shaft">
+		<visual>
+			<material name="black"/>
+			<xacro:shaft_geometry/>
+		</visual>
+		<collision>
+			<xacro:shaft_geometry/>
+		</collision>
+		<inertial>
+			<xacro:shaft_inertial/>
+		</inertial>
+	</link>
+	<xacro:fixed_offset_joint parent="rear_mount" child="rear_shaft" offset="-${front_to_rear_wheel_center/4} 0 -${baseplate_to_wheel_center/2}"/>
+	<!-- <xacro:dampener_joint parent="rear_mount" child="rear_shaft" offset="-${front_to_rear_wheel_center/4} 0 -${baseplate_to_wheel_center/2}"/> I can not get the dampener joint to work properly. The car seems to be bouncing around, like the spring is too hard and dampening is too little. I already tried adjusting several parameters. -->
+
+
+	<link name="front_right_hinge">
+		<visual>
+			<material name="white"/>
+			<xacro:hinge_geometry/>
+		</visual>
+		<collision>
+			<xacro:hinge_geometry/>
+			<contact_coefficients mu="10" kp="1000.0" kd="1.0"/>  <!-- mu=The friction coefficient, kp=Stiffness coefficient, kd=Dampening coefficient -->
+		</collision>
+		<inertial>
+			<xacro:hinge_inertial/>
+		</inertial>
+	</link>
+	<xacro:hinge_joint parent="front_shaft" child="front_right_hinge" offset="0 -${left_to_right_wheel_center/2} 0"/>
+	<xacro:hinge_transmission hinge="front_right_hinge"/>
+
+	<link name="front_left_hinge">
+		<visual>
+			<material name="white"/>
+			<xacro:hinge_geometry/>
+		</visual>
+		<collision>
+			<xacro:hinge_geometry/>
+			<contact_coefficients mu="10" kp="1000.0" kd="1.0"/>  <!-- mu=The friction coefficient, kp=Stiffness coefficient, kd=Dampening coefficient -->
+		</collision>
+		<inertial>
+			<xacro:hinge_inertial/>
+		</inertial>
+	</link>
+	<xacro:hinge_joint parent="front_shaft" child="front_left_hinge" offset="0 ${left_to_right_wheel_center/2} 0"/>
+	<xacro:hinge_transmission hinge="front_left_hinge"/>
+
+	<link name="front_right_wheel">
+		<visual>
+			<material name="black"/>
+			<xacro:wheel_geometry/>
+		</visual>
+		<collision>
+			<xacro:wheel_geometry/>
+			<contact_coefficients mu="10" kp="1000.0" kd="1.0"/>  <!-- mu=The friction coefficient, kp=Stiffness coefficient, kd=Dampening coefficient -->
+		</collision>
+		<inertial>
+			<xacro:wheel_inertial/>
+		</inertial>
+	</link>
+	<xacro:wheel_joint parent="front_right_hinge" child="front_right_wheel" offset="0 0 0"/>
+	<xacro:wheel_transmission wheel="front_right_wheel"/>
+
+	<link name="front_left_wheel">
+		<visual>
+			<material name="black"/>
+			<xacro:wheel_geometry/>
+		</visual>
+		<collision>
+			<xacro:wheel_geometry/>
+			<contact_coefficients mu="10" kp="1000.0" kd="1.0"/>  <!-- mu=The friction coefficient, kp=Stiffness coefficient, kd=Dampening coefficient -->
+		</collision>
+		<inertial>
+			<xacro:wheel_inertial/>
+		</inertial>
+	</link>
+	<xacro:wheel_joint parent="front_left_hinge" child="front_left_wheel" offset="0 0 0"/>
+	<xacro:wheel_transmission wheel="front_left_wheel"/>
+
+	<link name="rear_right_wheel">
+		<visual>
+			<material name="black"/>
+			<xacro:wheel_geometry/>
+		</visual>
+		<collision>
+			<xacro:wheel_geometry/>
+			<contact_coefficients mu="10" kp="1000.0" kd="1.0"/>  <!-- mu=The friction coefficient, kp=Stiffness coefficient, kd=Dampening coefficient -->
+		</collision>
+		<inertial>
+			<xacro:wheel_inertial/>
+		</inertial>
+	</link>
+	<xacro:wheel_joint parent="rear_shaft" child="rear_right_wheel" offset="0 -${left_to_right_wheel_center/2} 0"/>
+	<xacro:wheel_transmission wheel="rear_right_wheel"/>
+
+	<link name="rear_left_wheel">
+		<visual>
+			<material name="black"/>
+			<xacro:wheel_geometry/>
+		</visual>
+		<collision>
+			<xacro:wheel_geometry/>
+			<contact_coefficients mu="10" kp="1000.0" kd="1.0"/>  <!-- mu=The friction coefficient, kp=Stiffness coefficient, kd=Dampening coefficient -->
+		</collision>
+		<inertial>
+			<xacro:wheel_inertial/>
+		</inertial>
+	</link>
+	<xacro:wheel_joint parent="rear_shaft" child="rear_left_wheel" offset="0 ${left_to_right_wheel_center/2} 0"/>
+	<xacro:wheel_transmission wheel="rear_left_wheel"/>
+
+
+	<!-- Sensors -->
+	<xacro:if value="${enable_front_camera}">
+		<link name="camera_mount">
+			<visual>
+				<material name="blue"/>
+				<xacro:camera_mount_geometry/>
+			</visual>
+			<collision>
+				<xacro:camera_mount_geometry/>
+			</collision>
+			<inertial>
+				<xacro:camera_mount_inertial/>
+			</inertial>
+		</link>
+		<xacro:fixed_offset_joint parent="base_link" child="camera_mount" offset="${baseplate_length/2-baseplate_frontedge_to_camera} 0 ${baseplate_thickness}"/>
+
+		<link name="camera">
+			<visual>
+				<material name="blue"/>
+				<xacro:camera_geometry/>
+			</visual>
+			<collision>
+				<xacro:camera_geometry/>
+			</collision>
+			<inertial>
+				<xacro:camera_inertial/>
+			</inertial>
+		</link>
+		<xacro:fixed_offset_joint parent="camera_mount" child="camera" offset="0 0 ${camera_mount_height+camera_height/2}"/>
+	</xacro:if>
+
+	<xacro:if value="${enable_dual_camera}">
+		<link name="left_camera_mount">
+			<visual>
+				<material name="blue"/>
+				<xacro:camera_mount_geometry/>
+			</visual>
+			<collision>
+				<xacro:camera_mount_geometry/>
+			</collision>
+			<inertial>
+				<xacro:camera_mount_inertial/>
+			</inertial>
+		</link>
+		<xacro:fixed_offset_joint parent="base_link" child="left_camera_mount" offset="${baseplate_length/2-baseplate_frontedge_to_camera} ${camera_disparity/2} ${baseplate_thickness}"/>
+
+		<link name="left_camera">
+			<visual>
+				<material name="blue"/>
+				<xacro:camera_geometry/>
+			</visual>
+			<collision>
+				<xacro:camera_geometry/>
+			</collision>
+			<inertial>
+				<xacro:camera_inertial/>
+			</inertial>
+		</link>
+		<xacro:fixed_offset_joint parent="left_camera_mount" child="left_camera" offset="0 0 ${camera_mount_height+camera_height/2}"/>
+
+		<link name="right_camera_mount">
+			<visual>
+				<material name="blue"/>
+				<xacro:camera_mount_geometry/>
+			</visual>
+			<collision>
+				<xacro:camera_mount_geometry/>
+			</collision>
+			<inertial>
+				<xacro:camera_mount_inertial/>
+			</inertial>
+		</link>
+		<xacro:fixed_offset_joint parent="base_link" child="right_camera_mount" offset="${baseplate_length/2-baseplate_frontedge_to_camera} -${camera_disparity/2} ${baseplate_thickness}"/>
+
+		<link name="right_camera">
+			<visual>
+				<material name="blue"/>
+				<xacro:camera_geometry/>
+			</visual>
+			<collision>
+				<xacro:camera_geometry/>
+			</collision>
+			<inertial>
+				<xacro:camera_inertial/>
+			</inertial>
+		</link>
+		<xacro:fixed_offset_joint parent="right_camera_mount" child="right_camera" offset="0 0 ${camera_mount_height+camera_height/2}"/>
+	</xacro:if>
+
+	<xacro:if value="${enable_lidar}">
+		<link name="lidar_mount">
+			<visual>
+				<material name="red"/>
+				<xacro:lidar_mount_geometry/>
+			</visual>
+			<collision>
+				<xacro:lidar_mount_geometry/>
+			</collision>
+			<inertial>
+				<xacro:lidar_mount_inertial/>
+			</inertial>
+		</link>
+		<xacro:fixed_offset_joint parent="base_link" child="lidar_mount" offset="0 0 ${baseplate_thickness}"/>
+
+		<link name="lidar">
+			<visual>
+				<material name="red"/>
+				<xacro:lidar_geometry/>
+			</visual>
+			<collision>
+				<xacro:lidar_geometry/>
+			</collision>
+			<inertial>
+				<xacro:lidar_inertial/>
+			</inertial>
+		</link>
+		<xacro:fixed_offset_joint parent="lidar_mount" child="lidar" offset="0 0 ${lidar_mount_height+lidar_height/2}"/>
+	</xacro:if>
+
+	<xacro:if value="${enable_range_sensors}">
+		<link name="ranger_front_left">
+			<visual>
+				<material name="white"/>
+				<xacro:ranger_geometry/>
+			</visual>
+			<collision>
+				<xacro:ranger_geometry/>
+			</collision>
+			<inertial>
+				<xacro:ranger_inertial/>
+			</inertial>
+		</link>
+		<xacro:fixed_offset_joint parent="base_link" child="ranger_front_left" offset="${baseplate_length/2} -${camera_disparity/2} ${baseplate_thickness/2}"/>
+
+		<link name="ranger_front_right">
+			<visual>
+				<material name="white"/>
+				<xacro:ranger_geometry/>
+			</visual>
+			<collision>
+				<xacro:ranger_geometry/>
+			</collision>
+			<inertial>
+				<xacro:ranger_inertial/>
+			</inertial>
+		</link>
+		<xacro:fixed_offset_joint parent="base_link" child="ranger_front_right" offset="${baseplate_length/2} ${camera_disparity/2} ${baseplate_thickness/2}"/>
+	</xacro:if>
+
+	<!-- Link Gazebo and ROS - this has to happen as the last thing -->
+	<xacro:include filename="$(find jetsoncar_sim_description)/urdf/gazebo.xacro" />
+
+	<xacro:if value="${enable_realsense}">
+		<!-- Add realsense camera link -->
+		<!-- Note that this Realsense camera is not the correct one, hence the physical location (frames) of the different image streams will be different in real life -->
+		<!-- Import macro for realsense-RS200 camera-->
+		<xacro:include filename="$(find realsense_gazebo_plugin)/urdf/realsense-RS200.macro.xacro"/>
+		<!-- Create camera instance -->
+		<xacro:realsense-rs200 prefix="realsense" parent="base_link">
+			<origin xyz="${baseplate_length/2-baseplate_frontedge_to_camera} 0 ${baseplate_thickness+camera_mount_height+camera_height/2}" rpy="0 0 0" />
+		</xacro:realsense-rs200>
+	</xacro:if>
+</robot>

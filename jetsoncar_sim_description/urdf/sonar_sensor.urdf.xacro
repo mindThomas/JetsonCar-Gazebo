@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+
+<!-- Based on https://github.com/tu-darmstadt-ros-pkg/hector_models/blob/kinetic-devel/hector_sensors_description/urdf/sonar_sensor.urdf.xacro -->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="sonar_sensor" params="parent ros_topic update_rate min_range max_range field_of_view ray_count">
+    <gazebo reference="${parent}">
+      <sensor type="ray" name="${parent}">
+        <always_on>true</always_on>
+        <update_rate>${update_rate}</update_rate>
+        <pose>0 0 0 0 0 0</pose>
+        <visualize>true</visualize>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>${ray_count}</samples>
+              <resolution>1</resolution>
+              <min_angle>-${field_of_view/2}</min_angle>
+              <max_angle> ${field_of_view/2}</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>${ray_count}</samples>
+              <resolution>1</resolution>
+              <min_angle>-${field_of_view/2}</min_angle>
+              <max_angle> ${field_of_view/2}</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>${min_range}</min>
+            <max>${max_range}</max>
+            <resolution>0.01</resolution>
+          </range>
+        </ray>
+
+        <plugin name="gazebo_ros_${parent}_controller" filename="libhector_gazebo_ros_sonar.so">
+          <update_rate>${update_rate}</update_rate>
+          <visualize>true</visualize>
+          <gaussianNoise>0.005</gaussianNoise>
+          <topicName>${ros_topic}</topicName>
+          <frameId>${parent}</frameId>
+        </plugin>
+
+	<!-- The plugin could also be replaced the with default built-in -->
+	<!--
+        <plugin filename="libgazebo_ros_range.so" name="gazebo_ros_range">
+          <gaussianNoise>0.005</gaussianNoise>
+          <alwaysOn>true</alwaysOn>
+          <updateRate>${update_rate}</updateRate>
+          <topicName>${ros_topic}</topicName>
+          <frameName>${parent}</frameName>
+          <radiation>INFRARED</radiation>
+          <fov>${field_of_view}</fov>
+        </plugin>
+	-->
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+
+  <!-- Another option is this: https://github.com/ros-simulation/gazebo_ros_pkgs/pull/697 -->
+
+</robot>

@@ -1,0 +1,559 @@
+<?xml version="1.0"?>
+<robot name="jetsoncar" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+	<!-- include the Gazebo description of the JetsonCar -->
+	<!-- see the guide: http://wiki.ros.org/urdf/Tutorials/Using%20a%20URDF%20in%20Gazebo -->
+	<!-- inspired from https://github.com/mit-racecar/racecar-simulator/blob/master/racecar_description/urdf/racecar.gazebo and https://github.com/husky/husky_simulator/blob/indigo-devel/husky_gazebo/urdf/husky.gazebo.xacro -->
+
+
+	<xacro:include filename="$(find jetsoncar_sim_description)/urdf/physical.xacro" />
+
+	<!-- Visual and physical properties -->
+	<!-- See http://gazebosim.org/tutorials?tut=ros_urdf&cat=connect_ros -->
+	<gazebo reference="base_link">		
+		<mu1 value="0.0"/> <!-- Columb friction coefficient in fdir1 direction -->
+		<mu2 value="0.0"/> <!-- Columb friction in perpendicular direction to fdir1 -->		
+		<kp  value="10000000.0" /> <!-- contact stiffness -->
+		<kd  value="1.0" /> <!-- contact damping -->
+		<material>Gazebo/Grey</material>
+		<!--<turnGravityOff>false</turnGravityOff>-->
+	</gazebo>
+
+	<gazebo reference="imu">
+		<mu1 value="0.0"/> <!-- Columb friction coefficient in fdir1 direction -->
+		<mu2 value="0.0"/> <!-- Columb friction in perpendicular direction to fdir1 -->
+		<kp  value="10000000.0" /> <!-- contact stiffness -->
+		<kd  value="1.0" /> <!-- contact damping -->
+		<material>Gazebo/Grey</material>
+		<!--<turnGravityOff>false</turnGravityOff>-->
+	</gazebo>
+
+	<gazebo reference="front_mount">
+		<mu1 value="0.0"/> <!-- Columb friction coefficient in fdir1 direction -->
+		<mu2 value="0.0"/> <!-- Columb friction in perpendicular direction to fdir1 -->
+		<kp  value="10000000.0" /> <!-- contact stiffness -->
+		<kd  value="1.0" /> <!-- contact damping -->
+		<material>Gazebo/Grey</material>
+		<!--<turnGravityOff>false</turnGravityOff>-->
+	</gazebo>	
+
+	<gazebo reference="rear_mount">
+		<mu1 value="0.0"/> <!-- Columb friction coefficient in fdir1 direction -->
+		<mu2 value="0.0"/> <!-- Columb friction in perpendicular direction to fdir1 -->
+		<kp  value="10000000.0" /> <!-- contact stiffness -->
+		<kd  value="1.0" /> <!-- contact damping -->
+		<material>Gazebo/Grey</material>
+		<!--<turnGravityOff>false</turnGravityOff>-->
+	</gazebo>	
+	
+	<gazebo reference="front_shaft">
+		<mu1 value="0.0"/> <!-- Columb friction coefficient in fdir1 direction -->
+		<mu2 value="0.0"/> <!-- Columb friction in perpendicular direction to fdir1 -->
+		<kp  value="10000000.0" /> <!-- contact stiffness -->
+		<kd  value="1.0" /> <!-- contact damping -->
+		<material>Gazebo/Black</material>
+		<!--<turnGravityOff>false</turnGravityOff>-->
+	</gazebo>
+
+	<gazebo reference="rear_shaft">
+		<mu1 value="0.0"/> <!-- Columb friction coefficient in fdir1 direction -->
+		<mu2 value="0.0"/> <!-- Columb friction in perpendicular direction to fdir1 -->
+		<kp  value="10000000.0" /> <!-- contact stiffness -->
+		<kd  value="1.0" /> <!-- contact damping -->
+		<material>Gazebo/Black</material>
+		<!--<turnGravityOff>false</turnGravityOff>-->
+	</gazebo>
+
+	<gazebo reference="front_right_hinge">
+		<mu1 value="0.8"/> <!-- Columb friction coefficient in fdir1 direction -->
+		<mu2 value="0.8"/> <!-- Columb friction in perpendicular direction to fdir1 -->
+		<kp  value="10000000.0" /> <!-- contact stiffness -->
+		<kd  value="1.0" /> <!-- contact damping -->
+		<fdir1 value="1 0 0"/> <!-- direction of mu1 friction coefficient in the collision frame -->
+		<material>Gazebo/Black</material>
+		<!--<turnGravityOff>false</turnGravityOff>-->
+	</gazebo>
+
+	<gazebo reference="front_left_hinge">
+		<mu1 value="0.8"/> <!-- Columb friction coefficient in fdir1 direction -->
+		<mu2 value="0.8"/> <!-- Columb friction in perpendicular direction to fdir1 -->
+		<kp  value="10000000.0" /> <!-- contact stiffness -->
+		<kd  value="1.0" /> <!-- contact damping -->
+		<fdir1 value="1 0 0"/> <!-- direction of mu1 friction coefficient in the collision frame -->
+		<material>Gazebo/Black</material>
+		<!--<turnGravityOff>false</turnGravityOff>-->
+	</gazebo>
+
+	<gazebo reference="front_right_wheel">
+		<mu1 value="0.8"/> <!-- Columb friction coefficient in fdir1 direction -->
+		<mu2 value="0.8"/> <!-- Columb friction in perpendicular direction to fdir1 -->
+		<kp  value="10000000.0" /> <!-- contact stiffness -->
+		<kd  value="1.0" /> <!-- contact damping -->
+		<fdir1 value="1 0 0"/> <!-- direction of mu1 friction coefficient in the collision frame -->
+		<material>Gazebo/Black</material>
+		<!--<turnGravityOff>false</turnGravityOff>-->
+	</gazebo>
+
+	<gazebo reference="front_left_wheel">
+		<mu1 value="0.8"/> <!-- Columb friction coefficient in fdir1 direction -->
+		<mu2 value="0.8"/> <!-- Columb friction in perpendicular direction to fdir1 -->
+		<kp  value="10000000.0" /> <!-- contact stiffness -->
+		<kd  value="1.0" /> <!-- contact damping -->
+		<fdir1 value="1 0 0"/> <!-- direction of mu1 friction coefficient in the collision frame -->
+		<material>Gazebo/Black</material>
+		<!--<turnGravityOff>false</turnGravityOff>-->
+	</gazebo>
+
+	<gazebo reference="rear_right_wheel">
+		<mu1 value="0.8"/> <!-- Columb friction coefficient in fdir1 direction -->
+		<mu2 value="0.8"/> <!-- Columb friction in perpendicular direction to fdir1 -->
+		<kp  value="10000000.0" /> <!-- contact stiffness -->
+		<kd  value="1.0" /> <!-- contact damping -->
+		<fdir1 value="1 0 0"/> <!-- direction of mu1 friction coefficient in the collision frame -->
+		<material>Gazebo/Black</material>
+		<!--<turnGravityOff>false</turnGravityOff>-->
+	</gazebo>
+
+	<gazebo reference="rear_left_wheel">
+		<mu1 value="0.8"/> <!-- Columb friction coefficient in fdir1 direction -->
+		<mu2 value="0.8"/> <!-- Columb friction in perpendicular direction to fdir1 -->
+		<kp  value="10000000.0" /> <!-- contact stiffness -->
+		<kd  value="1.0" /> <!-- contact damping -->
+		<fdir1 value="1 0 0"/> <!-- direction of mu1 friction coefficient in the collision frame -->
+		<material>Gazebo/Black</material>
+		<!--<turnGravityOff>false</turnGravityOff>-->
+	</gazebo>
+
+	<gazebo reference="lidar_mount">
+		<mu1 value="0.0"/> <!-- Columb friction coefficient in fdir1 direction -->
+		<mu2 value="0.0"/> <!-- Columb friction in perpendicular direction to fdir1 -->
+		<kp  value="10000000.0" /> <!-- contact stiffness -->
+		<kd  value="1.0" /> <!-- contact damping -->
+		<material>Gazebo/Red</material>
+		<!--<turnGravityOff>false</turnGravityOff>-->
+	</gazebo>
+
+	<gazebo reference="lidar">
+		<mu1 value="0.0"/> <!-- Columb friction coefficient in fdir1 direction -->
+		<mu2 value="0.0"/> <!-- Columb friction in perpendicular direction to fdir1 -->
+		<kp  value="10000000.0" /> <!-- contact stiffness -->
+		<kd  value="1.0" /> <!-- contact damping -->
+		<material>Gazebo/Red</material>
+		<!--<turnGravityOff>false</turnGravityOff>-->
+	</gazebo>
+
+	<gazebo reference="left_camera_mount">
+		<mu1 value="0.0"/> <!-- Columb friction coefficient in fdir1 direction -->
+		<mu2 value="0.0"/> <!-- Columb friction in perpendicular direction to fdir1 -->
+		<kp  value="10000000.0" /> <!-- contact stiffness -->
+		<kd  value="1.0" /> <!-- contact damping -->
+		<material>Gazebo/Black</material>
+		<!--<turnGravityOff>false</turnGravityOff>-->
+	</gazebo>
+
+	<gazebo reference="left_camera">
+		<mu1 value="0.0"/> <!-- Columb friction coefficient in fdir1 direction -->
+		<mu2 value="0.0"/> <!-- Columb friction in perpendicular direction to fdir1 -->
+		<kp  value="10000000.0" /> <!-- contact stiffness -->
+		<kd  value="1.0" /> <!-- contact damping -->
+		<material>Gazebo/Blue</material>
+		<!--<turnGravityOff>false</turnGravityOff>-->
+	</gazebo>
+
+	<gazebo reference="right_camera_mount">
+		<mu1 value="0.0"/> <!-- Columb friction coefficient in fdir1 direction -->
+		<mu2 value="0.0"/> <!-- Columb friction in perpendicular direction to fdir1 -->
+		<kp  value="10000000.0" /> <!-- contact stiffness -->
+		<kd  value="1.0" /> <!-- contact damping -->
+		<material>Gazebo/Black</material>
+		<!--<turnGravityOff>false</turnGravityOff>-->
+	</gazebo>
+
+	<gazebo reference="right_camera">
+		<mu1 value="0.0"/> <!-- Columb friction coefficient in fdir1 direction -->
+		<mu2 value="0.0"/> <!-- Columb friction in perpendicular direction to fdir1 -->
+		<kp  value="10000000.0" /> <!-- contact stiffness -->
+		<kd  value="1.0" /> <!-- contact damping -->
+		<material>Gazebo/Blue</material>
+		<!--<turnGravityOff>false</turnGravityOff>-->
+	</gazebo>
+
+
+	<gazebo reference="front_camera_mount">
+		<mu1 value="0.0"/> <!-- Columb friction coefficient in fdir1 direction -->
+		<mu2 value="0.0"/> <!-- Columb friction in perpendicular direction to fdir1 -->
+		<kp  value="10000000.0" /> <!-- contact stiffness -->
+		<kd  value="1.0" /> <!-- contact damping -->
+		<material>Gazebo/Black</material>
+		<!--<turnGravityOff>false</turnGravityOff>-->
+	</gazebo>
+
+	<gazebo reference="front_camera">
+		<mu1 value="0.0"/> <!-- Columb friction coefficient in fdir1 direction -->
+		<mu2 value="0.0"/> <!-- Columb friction in perpendicular direction to fdir1 -->
+		<kp  value="10000000.0" /> <!-- contact stiffness -->
+		<kd  value="1.0" /> <!-- contact damping -->
+		<material>Gazebo/Blue</material>
+		<!--<turnGravityOff>false</turnGravityOff>-->
+	</gazebo>
+
+	<gazebo reference="ranger_front_left">
+		<mu1 value="0.0"/> <!-- Columb friction coefficient in fdir1 direction -->
+		<mu2 value="0.0"/> <!-- Columb friction in perpendicular direction to fdir1 -->
+		<kp  value="10000000.0" /> <!-- contact stiffness -->
+		<kd  value="1.0" /> <!-- contact damping -->
+		<material>Gazebo/White</material>
+		<!--<turnGravityOff>false</turnGravityOff>-->
+	</gazebo>
+
+	<gazebo reference="ranger_front_right">
+		<mu1 value="0.0"/> <!-- Columb friction coefficient in fdir1 direction -->
+		<mu2 value="0.0"/> <!-- Columb friction in perpendicular direction to fdir1 -->
+		<kp  value="10000000.0" /> <!-- contact stiffness -->
+		<kd  value="1.0" /> <!-- contact damping -->
+		<material>Gazebo/White</material>
+		<!--<turnGravityOff>false</turnGravityOff>-->
+	</gazebo>
+
+
+	<!-- We need to link Gazebo and ROS and let Gazebo load all the previously defined ROS parameters. Therefore this Gazebo file should be included in the end of the main xacro file! --> 
+
+	<!-- Link Gazebo and ROS -->
+	<gazebo>
+		<plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+			<robotNamespace>/jetsoncar</robotNamespace>
+			<robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+			<legacyModeNS>true</legacyModeNS>
+		</plugin>
+	</gazebo>
+
+	<!-- Plugins, eg. sensors -->
+	<!-- See the original Gazebo page describing the built-in plugins: http://gazebosim.org/tutorials?tut=ros_gzplugins -->
+	<!-- Other impressive plugins include:
+		https://github.com/ethz-asl/rotors_simulator/tree/master/rotors_gazebo_plugins/src
+		https://github.com/tu-darmstadt-ros-pkg/hector_gazebo/tree/kinetic-devel/hector_gazebo_plugins/src
+	-->
+	<!-- Hokuyo LiDAR can be found here: https://github.com/mit-racecar/racecar-simulator/blob/master/racecar_description/urdf/racecar.gazebo#L59 -->
+	<!-- LiDAR -->
+	<xacro:if value="${enable_lidar}">
+		<gazebo reference="lidar">
+			<sensor type="ray" name="lidar"> <!-- Type should be set as either "ray" or "gpu_ray" -->
+				<pose>0 0 0 0 0 0</pose>
+				<visualize>true</visualize>
+				<update_rate>10</update_rate>
+				<ray>
+					<scan>
+						<horizontal>
+							<samples>360</samples>
+							<resolution>1</resolution>
+							<min_angle>-3.1415</min_angle>
+							<max_angle>3.1415</max_angle>
+						</horizontal>
+					</scan>
+					<range>
+						<min>0.1</min>
+						<max>6.0</max>
+						<resolution>0.025</resolution> <!-- XV11 = 6m range with 8-bit resolution -->
+					</range>
+					<noise>
+						<type>gaussian</type>
+						<!-- Noise parameters based on published spec for Hokuyo laser
+						achieving "+-30mm" accuracy at range < 10m.  A mean of 0.0m and
+						stddev of 0.01m will put 99.7% of samples within 0.03m of the true
+						reading. -->
+						<mean>0.0</mean>
+						<stddev>0.1</stddev>
+					</noise>
+				</ray>
+				<plugin name="gazebo_lidar_controller" filename="libgazebo_ros_laser.so"> <!-- Should be set according to the type as either "libgazebo_ros_laser.so" or "libgazebo_ros_gpu_laser.so" -->
+					<topicName>/laser/scan</topicName>
+					<frameName>lidar</frameName>
+				</plugin>
+			</sensor>
+		</gazebo>
+	</xacro:if>
+
+	<!-- Camera sensor might be found here: https://github.com/JoshMarino/gazebo_and_ros_control or here: http://gazebosim.org/tutorials?tut=ros_gzplugins -->
+	<xacro:if value="${enable_front_camera}">
+		<joint name="camera_optical_joint" type="fixed">
+			<origin xyz="0 0 0" rpy="${-pi/2} 0.0 ${-pi/2}" />
+			<parent link="camera" />
+			<child link="camera_optical_frame"/>
+		</joint>
+		<link name="camera_optical_frame"/>
+		<gazebo reference="camera">
+			<sensor type="camera" name="camera">
+				<update_rate>30.0</update_rate>
+		    		<always_on>1</always_on>
+				<visualize>0</visualize>
+				<camera name="camera">
+					<horizontal_fov>1.3962634</horizontal_fov>
+					<image>
+						<width>1920</width>
+						<height>1080</height>
+						<format>R8G8B8</format>
+					</image>
+					<clip>
+						<near>0.02</near>
+						<far>300</far>
+					</clip>
+					<noise>
+						<type>gaussian</type>
+						<!-- Noise is sampled independently per pixel on each frame.  
+						That pixel's noise value is added to each of its color
+						channels, which at that point lie in the range [0,1]. -->
+						<mean>0.0</mean>
+						<stddev>0.007</stddev>
+					</noise>
+				</camera>
+				<plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+					<alwaysOn>true</alwaysOn>
+					<updateRate>30.0</updateRate>
+					<cameraName>/camera</cameraName>
+					<imageTopicName>image_raw</imageTopicName>
+					<cameraInfoTopicName>camera_info</cameraInfoTopicName>
+					<frameName>camera_optical_frame</frameName>
+					<hackBaseline>0.07</hackBaseline>
+					<distortionK1>0.0</distortionK1>
+					<distortionK2>0.0</distortionK2>
+					<distortionK3>0.0</distortionK3>
+					<distortionT1>0.0</distortionT1>
+					<distortionT2>0.0</distortionT2>
+				</plugin>
+			</sensor>
+		</gazebo>  
+	</xacro:if>
+
+	<xacro:if value="${enable_dual_camera}">
+		<!-- Left Camera -->
+		<joint name="left_camera_optical_joint" type="fixed">
+			<origin xyz="0 0 0" rpy="${-pi/2} 0.0 ${-pi/2}" />
+			<parent link="left_camera" />
+			<child link="left_camera_optical_frame"/>
+		</joint>
+		<link name="left_camera_optical_frame"/>
+		<gazebo reference="left_camera">
+			<sensor type="camera" name="left_camera">
+				<update_rate>30.0</update_rate>
+		    		<always_on>1</always_on>
+				<visualize>0</visualize>
+				<camera name="left_camera">
+					<horizontal_fov>1.3962634</horizontal_fov>
+					<image>
+						<width>1920</width>
+						<height>1080</height>
+						<format>R8G8B8</format>
+					</image>
+					<clip>
+						<near>0.02</near>
+						<far>300</far>
+					</clip>
+					<noise>
+						<type>gaussian</type>
+						<!-- Noise is sampled independently per pixel on each frame.  
+						That pixel's noise value is added to each of its color
+						channels, which at that point lie in the range [0,1]. -->
+						<mean>0.0</mean>
+						<stddev>0.007</stddev>
+					</noise>
+				</camera>
+				<plugin name="left_camera_controller" filename="libgazebo_ros_camera.so">
+					<alwaysOn>true</alwaysOn>
+					<updateRate>30.0</updateRate>
+					<cameraName>/camera/left</cameraName>
+					<imageTopicName>image_raw</imageTopicName>
+					<cameraInfoTopicName>camera_info</cameraInfoTopicName>
+					<frameName>left_camera_optical_frame</frameName>
+					<hackBaseline>0.07</hackBaseline>
+					<distortionK1>0.0</distortionK1>
+					<distortionK2>0.0</distortionK2>
+					<distortionK3>0.0</distortionK3>
+					<distortionT1>0.0</distortionT1>
+					<distortionT2>0.0</distortionT2>
+				</plugin>
+			</sensor>
+		</gazebo> 
+
+		<!-- Right Camera -->
+		<joint name="right_camera_optical_joint" type="fixed">
+			<origin xyz="0 0 0" rpy="${-pi/2} 0.0 ${-pi/2}" />
+			<parent link="right_camera" />
+			<child link="right_camera_optical_frame"/>
+		</joint>
+		<link name="right_camera_optical_frame"/>
+		<gazebo reference="right_camera">
+			<sensor type="camera" name="right_camera">
+				<update_rate>30.0</update_rate>
+		    		<always_on>1</always_on>
+				<visualize>0</visualize>
+				<camera name="right_camera">
+					<horizontal_fov>1.3962634</horizontal_fov>
+					<image>
+						<width>1920</width>
+						<height>1080</height>
+						<format>R8G8B8</format>
+					</image>
+					<clip>
+						<near>0.02</near>
+						<far>300</far>
+					</clip>
+					<noise>
+						<type>gaussian</type>
+						<!-- Noise is sampled independently per pixel on each frame.  
+						That pixel's noise value is added to each of its color
+						channels, which at that point lie in the range [0,1]. -->
+						<mean>0.0</mean>
+						<stddev>0.007</stddev>
+					</noise>
+				</camera>
+				<plugin name="right_camera_controller" filename="libgazebo_ros_camera.so">
+					<alwaysOn>true</alwaysOn>
+					<updateRate>30.0</updateRate>
+					<cameraName>/camera/right</cameraName>
+					<imageTopicName>image_raw</imageTopicName>
+					<cameraInfoTopicName>camera_info</cameraInfoTopicName>
+					<frameName>right_camera_optical_frame</frameName>
+					<hackBaseline>0.07</hackBaseline>
+					<distortionK1>0.0</distortionK1>
+					<distortionK2>0.0</distortionK2>
+					<distortionK3>0.0</distortionK3>
+					<distortionT1>0.0</distortionT1>
+					<distortionT2>0.0</distortionT2>
+				</plugin>
+			</sensor>
+		</gazebo> 
+	</xacro:if>
+
+	<!-- Range sensors -->
+	<xacro:if value="${enable_range_sensors}">
+		<xacro:include filename="$(find jetsoncar_sim_description)/urdf/sonar_sensor.urdf.xacro" />
+		<xacro:sonar_sensor parent="ranger_front_left" ros_topic="/range/left" update_rate="2" min_range="0.01" max_range="2.0" field_of_view="${10*pi/180}" ray_count="10"/>
+		<xacro:sonar_sensor parent="ranger_front_right" ros_topic="/range/right" update_rate="2" min_range="0.01" max_range="2.0" field_of_view="${10*pi/180}" ray_count="10"/>
+	</xacro:if>
+
+        <!-- Other example sensors can be found here: https://github.com/tu-darmstadt-ros-pkg/hector_models/tree/kinetic-devel/hector_sensors_description/urdf -->
+	<!-- Camera -->
+	<!--
+	<xacro:include filename="$(find hector_sensors_description)/urdf/generic_camera.urdf.xacro" />
+	<xacro:generic_camera name="front_cam" parent="base_link" ros_topic="camera/image" cam_info_topic="camera/camera_info" update_rate="10" res_x="320" res_y="240" image_format="R8G8B8" hfov="90">
+		<origin xyz="0 0 0" rpy="0 0 0"/>
+	</xacro:generic_camera>
+	-->
+
+	<!-- Sonar height sensor -->
+	<!--
+	<xacro:include filename="$(find hector_sensors_description)/urdf/sonar_sensor.urdf.xacro" />
+	<xacro:sonar_sensor name="sonar" parent="base_link" ros_topic="sonar_height" update_rate="10" min_range="0.03" max_range="3.0" field_of_view="${40*pi/180}" ray_count="3">
+		<origin xyz="0 0 0" rpy="0 0 0"/>
+	</xacro:sonar_sensor>
+	-->
+
+	<!-- IMU sensor -->
+	<xacro:if value="${enable_imu}">
+	<gazebo>
+		<plugin name="quadrotor_imu_sim" filename="libhector_gazebo_ros_imu.so">
+			<updateRate>100.0</updateRate>
+			<bodyName>imu</bodyName>
+			<frameId>base_link</frameId>
+			<topicName>imu</topicName>
+			<rpyOffset>0 0 0</rpyOffset> <!-- deprecated -->
+			<gaussianNoise>0</gaussianNoise>  <!-- deprecated -->
+			<accelDrift>0.1 0.1 0.1</accelDrift>
+			<accelGaussianNoise>0.35 0.35 0.3</accelGaussianNoise>
+			<rateDrift>0.1 0.1 0.1</rateDrift>
+			<rateGaussianNoise>0.05 0.05 0.015</rateGaussianNoise>
+		</plugin>
+
+		<plugin name="quadrotor_baro_sim" filename="libhector_gazebo_ros_baro.so">
+			<updateRate>10.0</updateRate>
+			<bodyName>imu</bodyName>
+			<frameId>base_link</frameId>
+			<topicName>pressure_height</topicName>
+			<altimeterTopicName>barometer</altimeterTopicName>
+			<offset>0</offset>
+			<drift>10.0</drift>
+			<gaussianNoise>0.1</gaussianNoise>
+		</plugin>
+		
+		<plugin name="quadrotor_magnetic_sim" filename="libhector_gazebo_ros_magnetic.so">
+			<updateRate>10.0</updateRate>
+			<bodyName>imu</bodyName>
+			<frameId>base_link</frameId>
+			<topicName>magnetometer</topicName>
+			<offset>0 0 0</offset>
+			<drift>0.0 0.0 0.0</drift>
+			<gaussianNoise>1.3e-2 1.3e-2 1.3e-2</gaussianNoise>
+		</plugin>
+
+		<plugin name="quadrotor_gps_sim" filename="libhector_gazebo_ros_gps.so">
+			<updateRate>4.0</updateRate>
+			<bodyName>imu</bodyName>
+			<frameId>base_link</frameId>
+			<topicName>gps</topicName>
+			<velocityTopicName>gps/velocity</velocityTopicName>
+			<referenceLatitude>49.860246</referenceLatitude>
+			<referenceLongitude>8.687077</referenceLongitude>
+			<drift>5.0 5.0 5.0</drift>
+			<gaussianNoise>0.01 0.01 0.01</gaussianNoise>
+			<velocityDrift>0 0 0</velocityDrift>
+			<velocityGaussianNoise>0.05 0.05 0.05</velocityGaussianNoise>
+		</plugin>
+
+		<plugin name="quadrotor_groundtruth_sim" filename="libgazebo_ros_p3d.so">
+			<updateRate>100.0</updateRate>
+			<frameName>world</frameName>
+			<bodyName>base_link</bodyName>
+			<topicName>ground_truth/state</topicName>
+			<gaussianNoise>0.0</gaussianNoise>
+		</plugin>
+	</gazebo>
+	</xacro:if>
+
+	<!-- GazeboRosImuSensor from: http://gazebosim.org/tutorials?tut=ros_gzplugins#IMUsensor(GazeboRosImuSensor) -->
+	<!-- Note, please see this: https://github.com/tu-darmstadt-ros-pkg/hector_gazebo/issues/50 -->
+	<!--
+	<gazebo reference="imu_link">
+		<gravity>true</gravity>
+		<sensor name="imu_sensor" type="imu">
+			<always_on>true</always_on>
+			<update_rate>100</update_rate>
+			<visualize>true</visualize>
+			<topic>__default_topic__</topic>
+			<plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+				<topicName>imu</topicName>
+				<bodyName>imu_link</bodyName>
+				<updateRateHZ>10.0</updateRateHZ>
+				<gaussianNoise>0.0</gaussianNoise>
+				<xyzOffset>0 0 0</xyzOffset>
+				<rpyOffset>0 0 0</rpyOffset>
+				<frameName>imu_link</frameName>
+			</plugin>
+			<pose>0 0 0 0 0 0</pose>
+		</sensor>
+	</gazebo>
+	-->
+
+	<!-- IMU from Rotors gazebo plugins: https://github.com/ethz-asl/rotors_simulator/blob/master/rotors_gazebo_plugins/src/gazebo_imu_plugin.cpp -->
+	<!--
+	<xacro:include filename="$(arg rotors_description_dir)/urdf/component_snippets.xacro" />
+	<xacro:imu_plugin_macro
+		namespace="${namespace}"
+		imu_suffix=""
+		parent_link="base_link"
+		imu_topic="/imu"
+		mass_imu_sensor="0.015"
+		gyroscope_noise_density="0.0003394"
+		gyroscopoe_random_walk="0.000038785"
+		gyroscope_bias_correlation_time="1000.0"
+		gyroscope_turn_on_bias_sigma="0.0087"
+		accelerometer_noise_density="0.004"
+		accelerometer_random_walk="0.006"
+		accelerometer_bias_correlation_time="300.0"
+		accelerometer_turn_on_bias_sigma="0.1960"
+	>
+		<inertia ixx="0.00001" ixy="0.0" ixz="0.0" iyy="0.00001" iyz="0.0" izz="0.00001" />
+		<origin xyz="0 0 0" rpy="0 0 0" />
+	</xacro:imu_plugin_macro>
+	-->
+
+</robot>

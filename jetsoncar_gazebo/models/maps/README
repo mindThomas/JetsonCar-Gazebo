@@ -1,0 +1,16 @@
+Heightmaps needs to be converted into DAE files for optimal performance
+See https://www.instructables.com/id/Converting-Map-Height-Data-Into-3D-Tiles/
+
+The heightmap should be square
+With the converter the output width will always be based on the input image pixels (width). Hence if an image of size 500x500 is used, the output will also be an STL file with units 500x500
+To control the height (make the height a desired dimension) you use the resolution of the heightmap defined in meter/pixel
+Unit height [pixels] = Desired height [m] / Resolution [m/pixels]
+   "java -jar heightmap2stl.jar 'heightmap.png' '<unit height>' '1'" will export the model with 4 units height and number of image pixels units width
+
+A desired height of approximately 3 m for indoor maps is reasonable
+This will export an STL file. Now you can use eg. Meshlab to convert this to a DAE file for use in Gazebo
+In Meshlab I suggest you scale the model to 1/10th of the metric scale, hence scaling by "10*<resolution>" where Resolution is in [meter pr. pixels]
+In Meshlab you scale by going to Filters -> Normals, Curvatures and Orientation -> Transform: Scale
+To simplify the model select "Quadratic Edge Collapse Decimation" and check "Preserve Boundary", "Preserve Normal", "Optimal position..." and "Post-simplification..." - and se"Target Number of faces" to around 100.000, "Pecentage Reduction" to 0 and "Quality Threshold" to 1
+
+Finally a world file has to be created in the "jetsoncar_gazebo/worlds" folder
