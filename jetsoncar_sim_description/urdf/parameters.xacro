@@ -7,7 +7,7 @@
 	<xacro:property name="enable_lidar" value="true" />
 	<xacro:property name="enable_realsense" value="false" />
 	<xacro:property name="enable_range_sensors" value="false" />
-	<xacro:property name="enable_dual_camera" value="false" />
+	<xacro:property name="enable_dual_camera" value="true" />
 	<xacro:property name="enable_front_camera" value="false" />
 	<xacro:property name="enable_imu" value="true" />
 
@@ -33,8 +33,6 @@
 	<xacro:property name="front_to_rear_wheel_center" value="0.42" />
 	<xacro:property name="left_to_right_wheel_center" value="0.285" />
 	<xacro:property name="baseplate_to_wheel_center" value="0.118" />
-	<xacro:property name="front_to_rear_wheel_center" value="0.42" />
-	<xacro:property name="front_to_rear_wheel_center" value="0.42" />
 
 	<!-- Baseplate related properties -->
 	<xacro:property name="baseplate_width" value="0.20" />	
